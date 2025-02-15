@@ -6,3 +6,4 @@ venv/
 *.mp3
 *.csv
 .DS_Store
+.ipynb

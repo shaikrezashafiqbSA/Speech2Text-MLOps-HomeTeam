@@ -10,14 +10,18 @@ COPY requirements.txt .
 # b) Install packages defined in reqreuiments.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the working directory contents into the container at /app
-COPY . .
+# create asr dir
+RUN mkdir -p /app/asr
+
+# only copy asr_api.py and models dir (which contains wav2vec2)
+COPY asr/asr_api.py /app/asr
+COPY asr/models/ /app/asr/models
 
 # working directory in container
 WORKDIR /app/asr
 
-# Expose port 8000 to za warudo
-EXPOSE 8000
+# Expose port 8001 to za warudo
+EXPOSE 8001
 
 # run fastAPI app with uvicorn 
-CMD ["uvicorn", "asr_api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "asr_api:app", "--host", "0.0.0.0", "--port", "8001"]

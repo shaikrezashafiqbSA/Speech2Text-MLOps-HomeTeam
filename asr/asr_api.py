@@ -32,53 +32,34 @@ async def lifespan(app: FastAPI):
 # initialise fastAPI app
 app = FastAPI(lifespan=lifespan)
 
-
 # 1) GET healthcheck endpoint 
 @app.get("/ping")
 async def ping():
-    logger.info("healthcheck endpoint was called")
-
-    if not app.asr_model:
-        return {"message": "Model is still loading. Please wait ~2 minutes and try again."}
     return {"message": "pong"}
 
-# 2)a) POST transcription endpoint - SLOWER: high disk read/write but low memory usage
+# 2) POST transcription endpoint 
 @app.post("/asr")
 async def transcribe(file: UploadFile = File(...)):
-    logger.info("asr endpoint was called")
-
-    if not app.asr_model:
-        return {"error": "Model is still loading. Please wait ~2 minutes and try again."}
-    
     with tempfile.NamedTemporaryFile(delete=False) as tmp:
         tmp.write(await file.read())
         audio_path = tmp.name
-
     try:
-
-        t1 = time.time()
         # load, resample audio file to 16kHz
         speech, sr = librosa.load(audio_path, sr=16000)
-        resample_time = np.round(time.time() - t1, 2)
         duration = len(speech) / sr
-
         # Transcribe audio file using asr_model
         transcription = app.asr_model.transcribe(speech)
-
     except Exception as e:
         logger.error(f"Error processing file: {str(e)}")
-        # Collect unprocessed files data into list to be investigated later
-    
-    
+        return {"transcription": transcription,
+                "duration": f"{duration:.1f}",
+                }
     finally:
         # Ensure the temporary file is deleted after processing
         os.unlink(audio_path)
-    
     # Return the transcription, duration, and resample time as a JSON response
-    return {
-        "transcription": transcription,
-        "duration": f"{duration:.1f}",
-        "resample_time":f"{resample_time:.1f}"
-        }
+    return {"transcription": transcription,
+            "duration": f"{duration:.1f}",
+            }
 
     

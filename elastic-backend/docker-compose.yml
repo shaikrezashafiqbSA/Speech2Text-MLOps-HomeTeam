@@ -1,0 +1,50 @@
+
+services:
+  es01:  # First Elasticsearch node
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=cv-cluster
+      - discovery.seed_hosts=es02  # Tell node 1 to find node 2
+      - cluster.initial_master_nodes=es01,es02
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Limit memory usage
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - http.cors.allow-methods=OPTIONS,HEAD,GET,POST,PUT,DELETE
+      - http.cors.allow-headers=X-Requested-With,Content-Type,Content-Length
+    volumes:
+      - es_data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200  # Expose Elasticsearch HTTP port
+    networks:
+      - elastic-net
+
+  es02:  # Second Elasticsearch node
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=cv-cluster
+      - discovery.seed_hosts=es01
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - http.cors.allow-methods=OPTIONS,HEAD,GET,POST,PUT,DELETE
+      - http.cors.allow-headers=X-Requested-With,Content-Type,Content-Length
+    volumes:
+      - es_data02:/usr/share/elasticsearch/data
+    networks:
+      - elastic-net
+
+volumes:
+  es_data01:
+  es_data02:
+
+networks:
+  elastic-net:

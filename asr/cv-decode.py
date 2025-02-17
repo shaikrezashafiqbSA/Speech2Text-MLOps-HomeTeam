@@ -5,7 +5,6 @@ from models.wav2vec2_model import Wav2Vec2Model
 import requests
 # import speechbrain as sb
 from tqdm import tqdm
-import signal
 
 # Initialise the ASR model
 # asr_model = Wav2Vec2Model()
@@ -37,7 +36,7 @@ def transcribe_file(file_path):
     #     return file_id, transcription, duration, age, gender, accent, "None"
     try:
         with open(file_path, 'rb') as f:
-            response = requests.post("http://localhost:8000/asr", files={"file": f})
+            response = requests.post("http://localhost:8001/asr", files={"file": f})
         response.raise_for_status()  # Raise an error if the request failed
         data = response.json()
         transcription = data.get("transcription")
@@ -53,8 +52,6 @@ def transcribe_file(file_path):
 def batch_transcribe(audio_dir, max_workers=None, delete_file = False):
     """
     This function performs batch transcribe using multiprocessing, given max_workers
-    This will produce a csv of output and also all failed transcription work will be in a errors.csv for investigation
-
     if csv exists then will not retranscribe existing ids, instead will continue with other new ids! 
     """
     # Determine output CSV file name based on directory name
@@ -111,5 +108,6 @@ def batch_transcribe(audio_dir, max_workers=None, delete_file = False):
                     pbar.update(1)
 
 if __name__ == "__main__":
-    batch_transcribe('D:/data/cv-valid-dev/cv-valid-dev', max_workers=8)
+    batch_transcribe('D:/data/cv-valid-dev/cv-valid-dev',
+                    max_workers=4)
                     

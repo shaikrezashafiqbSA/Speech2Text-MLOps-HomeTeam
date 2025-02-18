@@ -9,13 +9,13 @@ services:
       - discovery.seed_hosts=es02  # Tell node 1 to find node 2
       - cluster.initial_master_nodes=es01,es02
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"  # Limit memory usage
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"  # Limit memory usage
       - xpack.security.enabled=false
-      - xpack.security.http.ssl.enabled=false
+      - xpack.security.authc.api_key.enabled=false
       - http.cors.enabled=true
       - http.cors.allow-origin="*"
-      - http.cors.allow-methods=OPTIONS,HEAD,GET,POST,PUT,DELETE
-      - http.cors.allow-headers=X-Requested-With,Content-Type,Content-Length
+      - http.cors.allow-methods=POST
+      - http.cors.allow-headers=Content-Type
     volumes:
       - es_data01:/usr/share/elasticsearch/data
     ports:
@@ -30,13 +30,13 @@ services:
       - node.name=es02
       - cluster.name=cv-cluster
       - discovery.seed_hosts=es01
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
       - xpack.security.enabled=false
-      - xpack.security.http.ssl.enabled=false
+      - xpack.security.authc.api_key.enabled=false
       - http.cors.enabled=true
       - http.cors.allow-origin="*"
-      - http.cors.allow-methods=OPTIONS,HEAD,GET,POST,PUT,DELETE
-      - http.cors.allow-headers=X-Requested-With,Content-Type,Content-Length
+      - http.cors.allow-methods=POST
+      - http.cors.allow-headers=Content-Type
     volumes:
       - es_data02:/usr/share/elasticsearch/data
     networks:

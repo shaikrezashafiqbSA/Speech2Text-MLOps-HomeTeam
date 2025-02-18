@@ -1,0 +1,22 @@
+{
+  "name": "search-ui",
+  "version": "1.0.0",
+  "description": "```bash\r npm install @elastic/react-search-ui @elastic/react-search-ui-views react react-dom\r ```",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts --openssl-legacy-provider build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@elastic/react-search-ui": "^1.22.2",
+    "@elastic/react-search-ui-views": "^1.22.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "4.0.3"
+  }
+}

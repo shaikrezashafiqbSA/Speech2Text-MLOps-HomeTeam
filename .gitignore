@@ -4,6 +4,9 @@ __pycache__/
 venv/
 *.wav
 *.mp3
-*.csv
 .DS_Store
 .ipynb
+node_modules/
+.pem
+.pub
+.pdf

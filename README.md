@@ -48,7 +48,7 @@ MLOPS-TEST/
 
 2) Create VM
 ```bash
-az vm create --resource-group htx-asr-system --name htx-ec-esearch --image Ubuntu2204 --size Standard_B2s --admin-username htxadmin --data-disk-sizes-gb 1 --public-ip-address htx-SRS-ec-esearch-public-ip
+az vm create --resource-group htx-asr-system --name htx-ec-esearch --image Ubuntu2204 --size Standard_B2ms --admin-username htxadmin --data-disk-sizes-gb 1 --public-ip-address htx-SRS-ec-esearch-public-ip
 
 ```
  
@@ -76,6 +76,11 @@ docker version
 # create pem copy public key
 ssh-keygen -m PEM -t rsa -b 4096 -f ~/.ssh/id_rsa.pem
 
+#clone
+git clone git@github.com:shaikrezashafiqbSA/Speech2Text-MLOps-HomeTeam.git
+
+# git pull to update
+git pull origin main
 ```
 
 4) 

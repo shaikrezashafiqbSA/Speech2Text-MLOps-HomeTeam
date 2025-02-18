@@ -22,6 +22,11 @@ services:
       - 9200:9200  # Expose Elasticsearch HTTP port
     networks:
       - elastic-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1g
 
   es02:  # Second Elasticsearch node
     image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
@@ -41,6 +46,11 @@ services:
       - es_data02:/usr/share/elasticsearch/data
     networks:
       - elastic-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1g
 
   indexer:
     build: .
@@ -52,6 +62,12 @@ services:
     networks:
       - elastic-net   
     restart: "no"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1g
+
 
 volumes:
   es_data01:

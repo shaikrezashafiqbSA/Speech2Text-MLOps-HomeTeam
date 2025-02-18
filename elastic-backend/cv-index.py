@@ -65,7 +65,7 @@ def wait_for_elasticsearch(es_url, retries=60, delay=10):
 def cv_transcribe(path_to_csv):
     # Step 1: Connect to Elasticsearch
     logger.info("Waiting 30s before connecting to Elasticsearch...")
-    time.sleep(3000)
+    time.sleep(30)
     logger.info("attempt connecting to Elasticsearch...")
 
     es_url = f'http://{ES_HOST}:{ES_PORT}'

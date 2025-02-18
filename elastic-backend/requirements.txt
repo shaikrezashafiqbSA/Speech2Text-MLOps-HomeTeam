@@ -1,3 +1,4 @@
 elasticsearch==7.17.9
-pandas==1.5.3  # This version is stable with Python 3.9
+pandas==1.5.3  # This version is stable with Python 3.9-slim
 python-dotenv==1.0.0
+numpy==1.26.4

@@ -2,16 +2,18 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 import pandas as pd
 import logging
-
+import time
 
 # Set up logging to see what's happening
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger(__name__)
 
 # Where to find Elasticsearch
-ES_HOST = "localhost"
+ES_HOST = "es01"
 ES_PORT = "9200"
-INDEX_NAME = "cv-transcriptions"  # Name of our search index
+INDEX_NAME = "cv-transcriptions" 
 
 def create_index(es):
     """Create index with mapping if it doesn't exist"""
@@ -47,10 +49,30 @@ def generate_actions(df):
             }
         }
 
+def retry_es_connection(es, max_retries=5, delay=30):
+    """Retry connection to Elasticsearch with exponential backoff."""
+    retries = 0
+    while retries < max_retries:
+        try:
+            # Attempt to connect to the Elasticsearch cluster
+            if es.ping():
+                return True
+        except Exception as e:
+            logger.warning(f"Connection to Elasticsearch failed: {e}. Retrying in {delay} seconds...")
+            retries += 1
+            time.sleep(delay)
+    return False
+
+
 def cv_transcribe(path_to_csv):
     # Step 1: Connect to Elasticsearch
     logger.info("Connecting to Elasticsearch...")
     es = Elasticsearch([f'http://{ES_HOST}:{ES_PORT}'])
+    
+    # Retry connection
+    if not retry_es_connection(es):
+        logger.error("Failed to connect to Elasticsearch after multiple retries.")
+        return
     
     # Step 2: Create a place to store our data
     create_index(es)

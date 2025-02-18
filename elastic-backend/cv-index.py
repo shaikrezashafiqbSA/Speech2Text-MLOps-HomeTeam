@@ -50,7 +50,7 @@ def generate_actions(df):
             }
         }
 
-def wait_for_elasticsearch(es_url, retries=60, delay=1):
+def wait_for_elasticsearch(es_url, retries=60, delay=10):
     for _ in range(retries):
         try:
             response = requests.get(es_url)
@@ -65,7 +65,7 @@ def wait_for_elasticsearch(es_url, retries=60, delay=1):
 def cv_transcribe(path_to_csv):
     # Step 1: Connect to Elasticsearch
     logger.info("Waiting 30s before connecting to Elasticsearch...")
-    time.sleep(30)
+    time.sleep(3000)
     logger.info("attempt connecting to Elasticsearch...")
 
     es_url = f'http://{ES_HOST}:{ES_PORT}'

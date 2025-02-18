@@ -45,11 +45,13 @@ services:
   indexer:
     build: .
     container_name: indexer
-    command: python cv-index.py
+    command: bash -c "python cv-index.py && docker-compose down indexer"
     depends_on:
       - es01
+      - es02
     networks:
       - elastic-net   
+    restart: "no"
 
 volumes:
   es_data01:

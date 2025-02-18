@@ -43,18 +43,39 @@ MLOPS-TEST/
 
 ## Deployment Instructions
 1) Generate SSH Key
-ssh-keygen -m PEM -t rsa -b 4096 -f ~/.ssh/id_rsa.pem
+
 
 
 2) Create VM
 ```bash
-az vm create --resource-group htx-asr-system --name htx-ec-esearch --image Ubuntu2204 --size Standard_B2s --admin-username htxadmin --ssh-key-values ~/.ssh/id_rsa.pub --data-disk-sizes-gb 1 --public-ip-address htx-SRS-ec-esearch-public-ip
+az vm create --resource-group htx-asr-system --name htx-ec-esearch --image Ubuntu2204 --size Standard_B2s --admin-username htxadmin --data-disk-sizes-gb 1 --public-ip-address htx-SRS-ec-esearch-public-ip
 
 ```
  
 3) SSH into VM
 ```bash
+# ssh
 ssh -i ~/.ssh/id_rsa htxadmin@52.163.204.0
+
+# updates and install 
+sudo apt-get update
+
+# docker
+sudo apt-get install docker.io
+sudo usermod -aG docker $USER
+
+# check docker version
+docker version
+
+
+# start docker
+# sudo systemctl start docker
+# sudo systemctl enable docker
+
+
+# create pem copy public key
+ssh-keygen -m PEM -t rsa -b 4096 -f ~/.ssh/id_rsa.pem
+
 ```
 
 4) 

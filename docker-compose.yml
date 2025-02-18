@@ -1,96 +1,26 @@
-version: '3'
 
 services:
-  # ASR Service
-  asr-api:
-    build: 
-      context: ./asr  # Points to asr directory containing Dockerfile
-    ports:
-      - "8001:8001"
-    networks:
-      - app-network
-    volumes:
-      - ./asr/models:/app/models  # Mount models directory
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Elasticsearch Nodes
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
-    container_name: es01
-    environment:
-      - node.name=es01
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es02
-      - cluster.initial_master_nodes=es01,es02
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9200:9200"
-    networks:
-      - app-network
-    volumes:
-      - data01:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    extends:
+      file: ./elastic-backend/docker-compose.yml
+      service: es01
 
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
-    container_name: es02
-    environment:
-      - node.name=es02
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es01
-      - cluster.initial_master_nodes=es01,es02
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9201:9200"
-    networks:
-      - app-network
-    volumes:
-      - data02:/usr/share/elasticsearch/data
+    extends:
+      file: ./elastic-backend/docker-compose.yml
+      service: es02
 
-  # Elastic Backend Service
-  elastic-indexer:
-    build: 
-      context: ./elastic-backend
-    depends_on:
-      - es01
-      - es02
-    environment:
-      - ES_HOST=es01
-      - ES_PORT=9200
-    networks:
-      - app-network
-    volumes:
-      - ./elastic-backend/data:/app/data
-
-  # Search UI Service
   search-ui:
-    build: 
-      context: ./search-ui
-    ports:
-      - "3000:3000"
-    depends_on:
-      - es01
-      - es02
-    environment:
-      - ES_HOST=es01
-      - ES_PORT=9200
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+    extends:
+      file: ./search-ui/docker-compose.yml
+      service: search-ui
 
 volumes:
-  data01:
-  data02:
+  es_data01:
+    external: true
+  es_data02:
+    external: true
+
+networks:
+  elastic-net:
+    external: true

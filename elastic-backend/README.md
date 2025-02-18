@@ -9,7 +9,8 @@ elastic-backend/
 
 How to run:
 # Step 1: Start Elasticsearch
-docker-compose up -d
+```bash
+docker-compose up -d --build
 
 # Step 2: Wait about 30 seconds for Elasticsearch to start
 
@@ -23,3 +24,4 @@ curl http://localhost:9200/cv-transcriptions/_count
 
 
 cmd /c 'curl.exe -X GET "localhost:9200/cv-transcriptions/_search?pretty" -H "Content-Type: application/json" -d @query1.json'
+```

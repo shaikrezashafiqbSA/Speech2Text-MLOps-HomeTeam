@@ -1,7 +1,10 @@
 {
-    "query": {
-      "wildcard": {
-        "generated_text": "*cat*" 
+  "query": {
+    "match": {
+      "generated_text": {
+        "query": "toes", 
+        "analyzer": "keyword"
       }
     }
   }
+}

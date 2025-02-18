@@ -10,7 +10,7 @@ elastic-backend/
 How to run:
 # Step 1: Start Elasticsearch
 ```bash
-docker-compose up -d --build
+docker-compose up -d --build #-d for detached from terminal
 
 # 
 docker-compose down --rmi all -v
@@ -18,8 +18,6 @@ docker-compose down --rmi all -v
 # command to clean up unused docker objects to free up space and resolve potential conflicst
 docker system prune -a --volumes
 
-
-# Step 2: Wait about 30 seconds for indexer to start once es01 and es02 has been set up
 
 
 # Step 4: Check if it worked

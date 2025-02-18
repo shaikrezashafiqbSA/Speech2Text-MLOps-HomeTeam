@@ -16,6 +16,8 @@ services:
       - http.cors.allow-origin="*"
       - http.cors.allow-methods=POST
       - http.cors.allow-headers=Content-Type
+    ulimits:  # Crucial for memlock with Docker Compose
+      memlock: -1 # Soft limit 'unlimited'
     volumes:
       - es_data01:/usr/share/elasticsearch/data
     ports:
@@ -42,6 +44,8 @@ services:
       - http.cors.allow-origin="*"
       - http.cors.allow-methods=POST
       - http.cors.allow-headers=Content-Type
+    ulimits:  # Crucial for memlock with Docker Compose
+      memlock: -1 # Soft limit 'unlimited'
     volumes:
       - es_data02:/usr/share/elasticsearch/data
     networks:

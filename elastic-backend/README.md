@@ -12,7 +12,11 @@ How to run:
 ```bash
 docker-compose up -d --build
 
+# 
 docker-compose down --rmi all -v
+
+# command to clean up unused docker objects to free up space and resolve potential conflicst
+docker system prune -a --volumes
 
 
 # Step 2: Wait about 30 seconds for indexer to start

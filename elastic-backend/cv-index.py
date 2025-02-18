@@ -51,7 +51,7 @@ def generate_actions(df):
 
 def retry_es_connection(es, max_retries=5, delay=30):
     """Retry connection to Elasticsearch with exponential backoff."""
-    # time.sleep(30)
+    time.sleep(30)
     retries = 0
     while retries < max_retries:
         try:

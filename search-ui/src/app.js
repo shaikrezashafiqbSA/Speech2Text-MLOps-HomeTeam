@@ -5,11 +5,11 @@ import '@elastic/react-search-ui-views/lib/styles/styles.css';
 console.log("Initializing component");
 
 const connector = {
-  search: async (state) => {
+  search: async (state, from = 0, size = 20) => {
     console.log('Search state in connector:', state);
 
     const mustQueries = [];
-    
+
     if (state.searchFields.id) {
       mustQueries.push({
         term: {
@@ -18,9 +18,13 @@ const connector = {
       });
     }
     if (state.searchFields.generated_text) {
+      const searchText = state.searchFields.generated_text.trim(); // Trim whitespace
       mustQueries.push({
-        wildcard: {
-          generated_text: `*${state.searchFields.generated_text}*`
+        match: {
+          generated_text: {
+            query: searchText,
+            operator: "and"
+          }
         }
       });
     }
@@ -58,7 +62,7 @@ const connector = {
     }
     if (mustQueries.length === 0) {
       console.log('No search criteria provided. Returning no results.');
-      return { hits: { hits: [] } }; // Return no results if no search criteria
+      return { hits: { hits: [], total: 0 } }; // Return no results if no search criteria
     }
     const query = {
       bool: {
@@ -69,7 +73,7 @@ const connector = {
     console.log('Search query:', query);
 
     const response = await fetch(
-      `http://localhost:9200/cv-transcriptions/_search`,
+      `http://localhost:9200/cv-transcriptions/_search?from=${from}&size=${size}`,
       {
         method: 'POST',
         headers: {
@@ -82,7 +86,7 @@ const connector = {
     );
     const result = await response.json();
     console.log('Elasticsearch response:', result);
-    return result;
+    return result.hits ? result : { hits: { hits: [], total: 0 } }; // Ensure hits is defined
   }
 };
 
@@ -109,7 +113,9 @@ function App() {
     gender: '',
     accent: ''
   });
-  const [results, setResults] = useState([]); // Add state to manage search results
+  const [results, setResults] = useState([]); // State to manage search results
+  const [totalResults, setTotalResults] = useState(0); // State to manage total results count
+  const [page, setPage] = useState(0); // State to keep track of the current page
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -117,16 +123,35 @@ function App() {
     setSearchFields(prevState => ({ ...prevState, [name]: value }));
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (page = 0) => {
     console.log('Search button clicked');
     console.log('Current search fields:', searchFields);
     try {
-      const result = await connector.search({ searchFields });
+      const result = await connector.search({ searchFields }, page * 20, 20);
       console.log('Search results:', result);
-      setResults(result.hits.hits); // Set search results
+      setResults(result.hits.hits || []);
+      setTotalResults(result.hits.total.value || 0); // Set total results count
     } catch (error) {
       console.error('Search error:', error);
+      setResults([]); // Handle the error by clearing results
+      setTotalResults(0); // Reset total results count
     }
+  };
+
+  const handleNextPage = () => {
+    setPage(prevPage => {
+      const nextPage = prevPage + 1;
+      handleSearch(nextPage);
+      return nextPage;
+    });
+  };
+
+  const handlePrevPage = () => {
+    setPage(prevPage => {
+      const prevPageIndex = prevPage > 0 ? prevPage - 1 : 0;
+      handleSearch(prevPageIndex);
+      return prevPageIndex;
+    });
   };
 
   return (
@@ -176,10 +201,12 @@ function App() {
             value={searchFields.accent}
             onChange={handleInputChange}
           />
-          <button onClick={handleSearch}>Search</button>
+          <button onClick={() => handleSearch(0)}>Search</button>
         </div>
         <div>
-          {/* Results Display */}
+          {/* Display total results count */}
+          <p>Total Results: {totalResults}</p>
+          
           <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
             <thead>
               <tr>
@@ -197,6 +224,11 @@ function App() {
               ))}
             </tbody>
           </table>
+          <div>
+            <button onClick={handlePrevPage} disabled={page === 0}>Previous</button>
+            <button onClick={handleNextPage} disabled={results.length < 20}>Next</button>
+            <span style={{ marginLeft: '10px' }}>Page {page + 1}</span>
+          </div>
         </div>
       </div>
     </SearchProvider>
@@ -204,7 +236,6 @@ function App() {
 }
 
 function ResultRow({ id, result }) {
-  // console.log('Rendering result:', result); 
   return (
     <tr>
       <td style={{ border: '1px solid #ddd', padding: '8px' }}>{id}</td>

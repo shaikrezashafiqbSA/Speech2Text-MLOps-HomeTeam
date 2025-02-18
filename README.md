@@ -87,7 +87,7 @@ vm.max_map_count=262144
 # create pem copy public key
 ssh-keygen -m PEM -t rsa -b 4096 -f ~/.ssh/id_rsa.pem
 cat ~/.ssh/id_rsa.pem.pub
-# copy ssh keys to github
+# copy ssh keys to github settings
 
 # mkdir projects
 mkdir projects
@@ -100,5 +100,7 @@ git clone git@github.com:shaikrezashafiqbSA/Speech2Text-MLOps-HomeTeam.git
 git pull origin main
 ```
 
-4) 
+4) Deploy elastic-backend and search-ui 
+
+5) Deployment URL: http://20.184.50.171:3000/
 

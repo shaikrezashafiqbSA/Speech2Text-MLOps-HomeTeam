@@ -19,10 +19,8 @@ docker-compose down --rmi all -v
 docker system prune -a --volumes
 
 
-# Step 2: Wait about 30 seconds for indexer to start
+# Step 2: Wait about 30 seconds for indexer to start once es01 and es02 has been set up
 
-# Step 3: Run our Python script
-python cv-index.py
 
 # Step 4: Check if it worked
 curl http://localhost:9200/cv-transcriptions/_count

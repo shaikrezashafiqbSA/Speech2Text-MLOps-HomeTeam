@@ -98,7 +98,7 @@ def cv_transcribe(path_to_csv):
     logger.info(f"Bulk indexing {len(df)} documents...")
     success, failed = bulk(es, 
                             generate_actions(df),
-                            chunk_size=1000,  # Process 1000 documents at a time
+                            chunk_size=10,  # Process 1000 documents at a time
                             raise_on_error=False
                         )
     

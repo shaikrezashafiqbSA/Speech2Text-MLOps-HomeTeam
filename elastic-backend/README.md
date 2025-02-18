@@ -12,7 +12,10 @@ How to run:
 ```bash
 docker-compose up -d --build
 
-# Step 2: Wait about 30 seconds for Elasticsearch to start
+docker-compose down --rmi all -v
+
+
+# Step 2: Wait about 30 seconds for indexer to start
 
 # Step 3: Run our Python script
 python cv-index.py

@@ -3,6 +3,7 @@ from elasticsearch.helpers import bulk
 import pandas as pd
 import logging
 import time
+import requests
 
 # Set up logging to see what's happening
 logging.basicConfig(level=logging.INFO,
@@ -49,31 +50,33 @@ def generate_actions(df):
             }
         }
 
-def retry_es_connection(es, max_retries=5, delay=30):
-    """Retry connection to Elasticsearch with exponential backoff."""
-    time.sleep(30)
-    retries = 0
-    while retries < max_retries:
+def wait_for_elasticsearch(es_url, retries=60, delay=1):
+    for _ in range(retries):
         try:
-            # Attempt to connect to the Elasticsearch cluster
-            if es.ping():
+            response = requests.get(es_url)
+            if response.status_code == 200:
+                logger.info("Elasticsearch is up and running!")
                 return True
-        except Exception as e:
-            logger.warning(f"Connection to Elasticsearch failed: {e}. Retrying in {delay} seconds...")
-            retries += 1
+        except requests.exceptions.ConnectionError:
+            logger.info(f"Elasticsearch not ready, retrying in {delay} seconds...")
             time.sleep(delay)
     return False
 
-
 def cv_transcribe(path_to_csv):
     # Step 1: Connect to Elasticsearch
+    logger.info("Waiting 30s before connecting to Elasticsearch...")
+    time.sleep(30)
+    logger.info("attempt connecting to Elasticsearch...")
+
+    es_url = f'http://{ES_HOST}:{ES_PORT}'
     logger.info("Connecting to Elasticsearch...")
-    es = Elasticsearch([f'http://{ES_HOST}:{ES_PORT}'])
-    
-    # Retry connection
-    if not retry_es_connection(es):
-        logger.error("Failed to connect to Elasticsearch after multiple retries.")
+
+    # Wait for Elasticsearch to be ready
+    if not wait_for_elasticsearch(es_url):
+        logger.error("Elasticsearch is not ready after multiple retries.")
         return
+
+    es = Elasticsearch([es_url])
     
     # Step 2: Create a place to store our data
     create_index(es)

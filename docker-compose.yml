@@ -9,6 +9,11 @@ services:
       - REACT_APP_API_URL=http://es01:9200  # Use the service name for Elasticsearch
     networks:
       - elastic-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1g
 
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0

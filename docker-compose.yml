@@ -1,26 +1,90 @@
-
+version: '3.8'
 services:
+  search-ui:
+    build: ./search-ui
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_URL=http://es01:9200  # Use the service name for Elasticsearch
+    networks:
+      - elastic-net
+
   es01:
-    extends:
-      file: ./elastic-backend/docker-compose.yml
-      service: es01
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=cv-cluster
+      - discovery.seed_hosts=es02
+      - cluster.initial_master_nodes=es01,es02
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - xpack.security.enabled=false
+      - xpack.security.authc.api_key.enabled=false
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - http.cors.allow-methods=POST
+      - http.cors.allow-headers=Content-Type
+    ulimits:
+      memlock: -1
+    volumes:
+      - es_data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elastic-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1g
 
   es02:
-    extends:
-      file: ./elastic-backend/docker-compose.yml
-      service: es02
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=cv-cluster
+      - discovery.seed_hosts=es01
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+      - xpack.security.enabled=false
+      - xpack.security.authc.api_key.enabled=false
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - http.cors.allow-methods=POST
+      - http.cors.allow-headers=Content-Type
+    ulimits:
+      memlock: -1
+    volumes:
+      - es_data02:/usr/share/elasticsearch/data
+    networks:
+      - elastic-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1g
 
-  search-ui:
-    extends:
-      file: ./search-ui/docker-compose.yml
-      service: search-ui
+  indexer:
+    build: ./elastic-backend
+    container_name: indexer
+    command: bash -c "python cv-index.py && docker-compose down indexer"
+    depends_on:
+      - es01
+      - es02
+    networks:
+      - elastic-net
+    restart: "no"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1g
 
 volumes:
   es_data01:
-    external: true
   es_data02:
-    external: true
 
 networks:
   elastic-net:
-    external: true
+    driver: bridge

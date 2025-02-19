@@ -2,6 +2,7 @@ version: '3.8'
 services:
   search-ui:
     build: ./search-ui
+    container_name: search-ui
     ports:
       - "3000:80"
     environment:

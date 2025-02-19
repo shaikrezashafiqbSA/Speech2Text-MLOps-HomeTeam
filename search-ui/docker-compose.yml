@@ -5,4 +5,4 @@ services:
     ports:
       - "3000:80"
     environment:
-      - REACT_APP_API_URL=http://localhost:9200  # Update to your API
+      - REACT_APP_API_URL=http://host.docker.internal:9200  # Update to your API

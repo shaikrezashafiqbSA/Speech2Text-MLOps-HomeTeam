@@ -28,9 +28,9 @@ services:
       - xpack.security.enabled=false
       - xpack.security.authc.api_key.enabled=false
       - http.cors.enabled=true
-      - http.cors.allow-origin="*"
-      - http.cors.allow-methods=POST
-      - http.cors.allow-headers=Content-Type
+      - http.cors.allow-origin=*
+      - http.cors.allow-methods=POST, GET, OPTIONS
+      - http.cors.allow-headers=X-Requested-With,Content-Type,Content-Length
     ulimits:
       memlock: -1
     volumes:
@@ -56,9 +56,9 @@ services:
       - xpack.security.enabled=false
       - xpack.security.authc.api_key.enabled=false
       - http.cors.enabled=true
-      - http.cors.allow-origin="*"
-      - http.cors.allow-methods=POST
-      - http.cors.allow-headers=Content-Type
+      - http.cors.allow-origin=*
+      - http.cors.allow-methods=POST, GET, OPTIONS
+      - http.cors.allow-headers=X-Requested-With,Content-Type,Content-Length
     ulimits:
       memlock: -1
     volumes:

@@ -3,7 +3,7 @@ import { SearchProvider } from '@elastic/react-search-ui';
 import '@elastic/react-search-ui-views/lib/styles/styles.css';
 
 console.log("Initializing component");
-const apiUrl = process.env.REACT_APP_API_URL || 'http://es01:9200'
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:9200'
 
 const connector = {
   search: async (state, from = 0, size = 20) => {

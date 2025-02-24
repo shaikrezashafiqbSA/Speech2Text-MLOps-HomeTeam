@@ -19,6 +19,9 @@ services:
         limits:
           cpus: '0.5'
           memory: 1g
+  
+    dns:
+      - 127.0.0.11
 
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.9.0

@@ -1,4 +1,8 @@
-version: '3.8'
+
+networks:
+  elastic-net:
+    driver: bridge
+
 services:
   search-ui:
     build: ./search-ui
@@ -6,9 +10,13 @@ services:
     ports:
       - "3000:80"
     environment:
-      - REACT_APP_API_URL=http://es01:9200  # Use the service name for Elasticsearch
+      - REACT_APP_API_URL=http://es01:9200  
     networks:
       - elastic-net
+    depends_on:
+      indexer:
+        condition: service_completed_successfully
+      
     deploy:
       resources:
         limits:
@@ -91,6 +99,3 @@ volumes:
   es_data01:
   es_data02:
 
-networks:
-  elastic-net:
-    driver: bridge

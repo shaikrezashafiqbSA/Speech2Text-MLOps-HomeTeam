@@ -2,6 +2,7 @@
 networks:
   elastic-net:
     driver: bridge
+    name: elastic-net
 
 services:
   search-ui:
@@ -12,11 +13,7 @@ services:
     environment:
       - REACT_APP_API_URL=http://es01:9200  
     networks:
-      - elastic-net
-    depends_on:
-      indexer:
-        condition: service_completed_successfully
-      
+      - elastic-net      
     deploy:
       resources:
         limits:

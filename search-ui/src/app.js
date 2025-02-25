@@ -119,6 +119,7 @@ const config = {
 };
 
 function App() {
+  console.log("API URL:", apiUrl);
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('wethecitizensofsingapore');
   const [isLoggedIn, setIsLoggedIn] = useState(true); // Track login status

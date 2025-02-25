@@ -176,6 +176,26 @@ function App() {
     <SearchProvider config={config}>
       <div className="App" style={{ padding: '20px' }}>
         <h1>ASR Transcription Search</h1>
+
+          {/* Login Form */}
+          {!isLoggedIn && (
+          <div>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button onClick={handleLogin}>Login</button>
+          </div>
+          )}
+        
         <div>
           <input
             type="text"

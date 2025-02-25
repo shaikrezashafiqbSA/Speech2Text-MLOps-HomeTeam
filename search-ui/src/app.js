@@ -73,13 +73,20 @@ const connector = {
 
     console.log('Search query:', query);
 
+    const username = state.username; // Get username from search state
+    const password = state.password; // Get password from search state
+
+    if (!username || !password) {
+      throw new Error("Username and password are required.");
+    }
+
     const response = await fetch(
       `${apiUrl}/cv-transcriptions/_search?from=${from}&size=${size}`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa('elastic:<your_elastic_password>') // Use the generated password here
+          'Authorization': 'Basic ' + btoa(`${username}:${password}`) // Use the generated password here
         },
         body: JSON.stringify({
           query: query
@@ -90,7 +97,7 @@ const connector = {
       const errorText = await response.text(); // Get the error message from the server
       throw new Error(`Search request failed with status ${response.status}: ${errorText}`); // Throw a more informative error
     }
-    
+
     const result = await response.json();
     console.log('Elasticsearch response:', result);
     return result.hits ? result : { hits: { hits: [], total: 0 } }; // Ensure hits is defined

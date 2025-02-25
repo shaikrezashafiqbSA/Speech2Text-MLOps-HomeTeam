@@ -3,7 +3,7 @@ import { SearchProvider } from '@elastic/react-search-ui';
 import '@elastic/react-search-ui-views/lib/styles/styles.css';
 console.log("Initializing component");
 
-const apiUrl = process.env.REACT_APP_API_URL || 'http://20.184.50.171:elasticsearch'; 
+const apiUrl = process.env.REACT_APP_API_URL; //
 
 const connector = {
   search: async (state, from = 0, size = 20) => {
@@ -86,6 +86,11 @@ const connector = {
         })
       }
     );
+    if (!response.ok) { // Check for HTTP errors (crucial)
+      const errorText = await response.text(); // Get the error message from the server
+      throw new Error(`Search request failed with status ${response.status}: ${errorText}`); // Throw a more informative error
+    }
+    
     const result = await response.json();
     console.log('Elasticsearch response:', result);
     return result.hits ? result : { hits: { hits: [], total: 0 } }; // Ensure hits is defined

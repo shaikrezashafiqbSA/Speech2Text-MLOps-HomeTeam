@@ -3,7 +3,7 @@ import { SearchProvider } from '@elastic/react-search-ui';
 import '@elastic/react-search-ui-views/lib/styles/styles.css';
 console.log("Initializing component");
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || 'http://20.184.50.171:elasticsearch'; 
 
 const connector = {
   search: async (state, from = 0, size = 20) => {
@@ -78,7 +78,8 @@ const connector = {
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': 'Basic ' + btoa('elastic:<your_elastic_password>') // Use the generated password here
         },
         body: JSON.stringify({
           query: query
@@ -106,6 +107,10 @@ const config = {
 };
 
 function App() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+
   const [searchFields, setSearchFields] = useState({
     id: '',
     generated_text: '',

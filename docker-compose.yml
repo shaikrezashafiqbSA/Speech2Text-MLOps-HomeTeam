@@ -3,17 +3,21 @@ networks:
   elastic-net:
     driver: bridge
     name: elastic-net
+    ipam:
+      config:
+        - subnet: 192.168.64.0/20
 
 services:
   search-ui:
     build: ./search-ui
     container_name: search-ui
     ports:
-      - "3000:80"
+      - "3000:3000"
     environment:
-      - REACT_APP_API_URL=http://192.168.0.2:9200 
+      - REACT_APP_API_URL=http://20.184.50.171/elasticsearch
     networks:
-      - elastic-net      
+      elastic-net:
+        ipv4_address: 192.168.64.4   
     deploy:
       resources:
         limits:
@@ -33,7 +37,7 @@ services:
       - cluster.initial_master_nodes=es01,es02
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - xpack.security.authc.api_key.enabled=false
       - http.cors.enabled=true
       - http.cors.allow-origin="*"
@@ -46,7 +50,8 @@ services:
     ports:
       - 9200:9200
     networks:
-      - elastic-net
+        elastic-net:
+        ipv4_address: 192.168.64.2
     deploy:
       resources:
         limits:
@@ -61,7 +66,7 @@ services:
       - cluster.name=cv-cluster
       - discovery.seed_hosts=es01
       - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - xpack.security.authc.api_key.enabled=false
       - http.cors.enabled=true
       - http.cors.allow-origin="*"
@@ -73,6 +78,8 @@ services:
       - es_data02:/usr/share/elasticsearch/data
     networks:
       - elastic-net
+      elastic-net:
+      ipv4_address: 192.168.64.3
     deploy:
       resources:
         limits:

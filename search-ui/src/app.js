@@ -119,9 +119,9 @@ const config = {
 };
 
 function App() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('wethecitizensofsingapore');
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Track login status
 
   const [searchFields, setSearchFields] = useState({
     id: '',
@@ -145,7 +145,7 @@ function App() {
     console.log('Search button clicked');
     console.log('Current search fields:', searchFields);
     try {
-      const result = await connector.search({ searchFields }, page * 20, 20);
+      const result = await connector.search({ searchFields, username, password }, page * 20, 20);
       console.log('Search results:', result);
       setResults(result.hits.hits || []);
       setTotalResults(result.hits.total.value || 0); // Set total results count
@@ -176,27 +176,6 @@ function App() {
     <SearchProvider config={config}>
       <div className="App" style={{ padding: '20px' }}>
         <h1>ASR Transcription Search</h1>
-
-          {/* Login Form */}
-          {!isLoggedIn && (
-          <div>
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button onClick={handleLogin}>Login</button>
-          </div>
-          )}
-         {/* Search Form (Only visible after login) */}
-         {isLoggedIn && (
         <div>
           <input
             type="text"
@@ -242,7 +221,6 @@ function App() {
           />
           <button onClick={() => handleSearch(0)}>Search</button>
         </div>
-         )}
         <div>
           {/* Display total results count */}
           <p>Total Results: {totalResults}</p>

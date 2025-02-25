@@ -51,7 +51,7 @@ services:
       - 9200:9200
     networks:
         elastic-net:
-        ipv4_address: 192.168.64.2
+          ipv4_address: 192.168.64.2
     deploy:
       resources:
         limits:
@@ -77,9 +77,8 @@ services:
     volumes:
       - es_data02:/usr/share/elasticsearch/data
     networks:
-      - elastic-net
       elastic-net:
-      ipv4_address: 192.168.64.3
+        ipv4_address: 192.168.64.3
     deploy:
       resources:
         limits:

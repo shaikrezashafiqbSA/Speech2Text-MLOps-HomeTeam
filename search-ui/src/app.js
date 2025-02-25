@@ -195,7 +195,8 @@ function App() {
             <button onClick={handleLogin}>Login</button>
           </div>
           )}
-        
+         {/* Search Form (Only visible after login) */}
+         {isLoggedIn && (
         <div>
           <input
             type="text"
@@ -241,6 +242,7 @@ function App() {
           />
           <button onClick={() => handleSearch(0)}>Search</button>
         </div>
+         )}
         <div>
           {/* Display total results count */}
           <p>Total Results: {totalResults}</p>
